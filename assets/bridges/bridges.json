@@ -1,0 +1,74 @@
+{
+  "$comment": [
+    "Bridge presets offered by the Tor Bridge Settings screen.",
+    "",
+    "DarkFlow deliberately ships no hard-coded bridge addresses. Bridge lines",
+    "are rotated by the Tor Project precisely because censors block them, so a",
+    "list baked into an app release is stale within weeks and gives users a",
+    "false sense of working access. Instead:",
+    "",
+    "  * the presets below select the pluggable transport and the torrc wiring,",
+    "  * the app fetches bridges at runtime through BridgeDB's moat interface",
+    "    when the network allows it (see tool/fetch_bridges.ps1 for the same",
+    "    request made from a desktop shell),",
+    "  * and the user can always paste their own lines into the manual box.",
+    "",
+    "The `bridges` arrays are intentionally empty: an empty preset means",
+    "'use this transport, and obtain addresses from moat or from the user'.",
+    "Do not fill them with addresses copied from a blog post."
+  ],
+  "schemaVersion": 1,
+  "refreshedAt": null,
+  "presets": [
+    {
+      "id": "none",
+      "label": "No bridge",
+      "mode": "automatic",
+      "description": "Connect straight to the Tor network. Correct where Tor is not blocked; if the bar stops around 10%, come back and pick a transport.",
+      "bridges": []
+    },
+    {
+      "id": "obfs4",
+      "label": "obfs4",
+      "mode": "obfs4",
+      "description": "Traffic is scrambled so it resembles nothing recognisable. The most widely usable transport, and the one to try first.",
+      "transport": "obfs4",
+      "moatTransport": "obfs4",
+      "bridges": []
+    },
+    {
+      "id": "webtunnel",
+      "label": "WebTunnel",
+      "mode": "webTunnel",
+      "description": "The connection looks like ordinary HTTPS to a website, which defeats blocks that only allow web browsing.",
+      "transport": "webtunnel",
+      "moatTransport": "webtunnel",
+      "bridges": []
+    },
+    {
+      "id": "snowflake",
+      "label": "Snowflake",
+      "mode": "snowflake",
+      "description": "Routes through volunteers' browsers. No addresses to maintain, but slower and less predictable.",
+      "transport": "snowflake",
+      "moatTransport": "snowflake",
+      "bridges": []
+    },
+    {
+      "id": "meek",
+      "label": "meek",
+      "mode": "meek",
+      "description": "Domain fronting through a large CDN. Slow, but it works in some of the most restrictive networks.",
+      "transport": "meek",
+      "moatTransport": "meek",
+      "bridges": []
+    }
+  ],
+  "moat": {
+    "baseUrl": "https://bridges.torproject.org/moat",
+    "settingsEndpoint": "/circumvention/settings",
+    "builtinEndpoint": "/circumvention/builtin",
+    "requestEndpoint": "/circumvention/request",
+    "$comment": "The moat API requires solving a challenge for /request; /builtin returns the transports that need no addresses at all."
+  }
+}

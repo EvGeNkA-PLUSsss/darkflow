@@ -1,0 +1,247 @@
+﻿{
+    "schema_version":  1,
+    "description":  "Provenance record for the Tor pluggable-transport CLIENT binaries shipped in android/app/src/main/jniLibs/arm64-v8a. These binaries are fetched and compiled from upstream sources, not reviewed by hand, so this file records what each one is and how it was produced.",
+    "generated_at_utc":  "2026-10-11T08:46:12Z",
+    "disclaimer":  "REVIEW REQUIRED. These are third-party upstream Go modules compiled for Android arm64-v8a. They were not source-audited. Two build-time substitutions were necessary and are recorded per artefact: a local replacement for github.com/wlynxg/anet (tool/anet-shim) and, for the conjure client, two replace directives replayed from that module\u0027s own go.mod.",
+    "target":  {
+                   "goos":  "android",
+                   "goarch":  "arm64",
+                   "abi_directory":  "arm64-v8a",
+                   "cgo_enabled":  false,
+                   "elf_type":  "ET_DYN (static PIE, required by Android)",
+                   "e_machine":  "0xB7 (AArch64)",
+                   "rationale":  "Files must be named lib*.so and live in the APK native-library directory: Android only extracts lib*.so from lib/\u003cabi\u003e/, and since API 29 (W^X) only files in that directory may be exec\u0027d. CGO_ENABLED=0 with GOOS=android makes the Go linker emit a static PIE. GOOS=linux was not used because it produces a non-PIE binary Android refuses to execute."
+               },
+    "toolchain":  {
+                      "go_version":  "go version go1.27.2 windows/amd64",
+                      "go_root":  "%LOCALAPPDATA%\\go-toolchain\\go1.27.2",
+                      "other_toolchains_installed":  [
+                                                         "go1.23.4",
+                                                         "go1.25.12"
+                                                     ],
+                      "why_1_27_2":  "A single toolchain was used for all six. go1.23.4 is too old (lyrebird requires go \u003e= 1.26.0, snowflake \u003e= 1.25.12). go1.25.12 and go1.27.2 both work once the anet shim is in place; go1.27.2 was chosen as the newest installed.",
+                      "goflags":  "-mod=mod -trimpath",
+                      "goproxy":  "https://proxy.golang.org (no \",direct\" fallback: gitlab.torproject.org and git.torproject.org HTTPS are blocked on this network, and a fallback would turn a clean proxy error into a network timeout)",
+                      "method":  "Each package was built inside a throwaway module in the toolchain cache: go mod init, go get \u003cpackage\u003e@\u003cversion\u003e, optional go mod edit -replace, then go build -o \u003cfile\u003e \u003cpackage\u003e. `go install pkg@version` cannot be used: it refuses to cross-compile (\"go: cannot install cross-compiled binaries when GOBIN is set\") and rejects modules carrying replace directives (\"The go.mod file for the module providing named packages contains one or more replace directives\"). `go build pkg@version` is not an option either - go build has no path@version form."
+                  },
+    "summary":  {
+                    "requested_count":  6,
+                    "built_count":  6,
+                    "failed_count":  0,
+                    "total_bytes":  102993549,
+                    "total_mib":  98.22
+                },
+    "verification":  {
+                         "script":  "tool/verify_android_pt.ps1",
+                         "checks":  [
+                                        "file exists and size \u003e 1 MiB (a Go HTTP binary far below that is suspicious)",
+                                        "first four bytes are 7F 45 4C 46 (ELF)",
+                                        "ELF e_machine at offset 18 (2-byte little-endian) == 0xB7 (AArch64)",
+                                        "ELF e_type at offset 16 (2-byte little-endian) == 3 (ET_DYN, i.e. PIE)",
+                                        "go version -m succeeds and reports the expected module and main package"
+                                    ],
+                         "result":  "6/6 passed",
+                         "raw_json":  "verify_raw.json"
+                     },
+    "binaries":  [
+                     {
+                         "artifact":  "liblyrebird.so",
+                         "transport":  "lyrebird (unified client: obfs4, snowflake, webtunnel, meek_lite, obfs3, obfs2, scramblesuit)",
+                         "go_module":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/lyrebird",
+                         "main_package":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/lyrebird/cmd/lyrebird",
+                         "resolved_version":  "v0.0.0-20261008205628-362a60bb4e3f",
+                         "requested_version":  "@latest",
+                         "build_command":  "go get \u003cpkg\u003e@latest; go mod edit -replace github.com/wlynxg/anet=\u003ctool/anet-shim\u003e; go build -o liblyrebird.so \u003cpkg\u003e",
+                         "file_size_bytes":  24943153,
+                         "sha256":  "506b1b10dc84adcb3e70a74621c721b454163f32e640713adeeb4b77f1351075",
+                         "elf_is_elf":  true,
+                         "elf_e_machine":  "0xB7",
+                         "elf_e_machine_ok":  true,
+                         "elf_e_type":  3,
+                         "elf_e_type_ok":  true,
+                         "go_version_line":  "mod\tgitlab.torproject.org/tpo/anti-censorship/pluggable-transports/lyrebird\tv0.0.0-20261008205628-362a60bb4e3f\th1:iQzghnWKOjCh0lCwlfYckalo4Xmf91z2f9T89bXbXIM=",
+                         "go_dependency_count":  61,
+                         "go_replacements":  [
+                                                 "=\u003e\tD:\\Users\\EvGeN\\Desktop\\darkflow\\tool\\anet-shim\t(devel)"
+                                             ],
+                         "uses_anet_shim":  true,
+                         "verification":  "PASS",
+                         "notes":  "lyrebird is a multi-module repository. The module root has no main package; the client main lives in the nested module .../lyrebird/cmd/lyrebird, so that nested module path is what was requested. Its go.mod declares \"go 1.26.0\" and its \"latest\" tag is a pseudo-version because upstream publishes no semver tags. This is the only binary whose resolved version is not pinned by the request: @latest resolved to the commit above and will move if upstream publishes a new commit.",
+                         "substitutions":  [
+                                               {
+                                                   "consequence":  "anet\u0027s Android netlink workaround is NOT present. Interface enumeration uses the standard library getifaddrs path instead. This is the one functional deviation in this build set.",
+                                                   "version":  "v0.0.5 (redirected)",
+                                                   "kind":  "local source substitute",
+                                                   "path":  "tool/anet-shim",
+                                                   "module":  "github.com/wlynxg/anet",
+                                                   "reason":  "Upstream anet v0.0.5 links against the unexported standard-library symbol net.zoneCache via //go:linkname, which the Go linker rejects: \"link: github.com/wlynxg/anet: invalid reference to net.zoneCache\". Reproduced for GOOS=android/GOARCH=arm64 with go1.23.4, go1.25.12 and go1.27.2. snowflake needs go \u003e= 1.25.12 and lyrebird needs go \u003e= 1.26.0, so no toolchain that can build these clients avoids it, and there is no build tag that selects anet\u0027s non-Android pass-through file when the target is Android. The shim keeps the same import path and exported API but implements it on top of the standard library net package, which is exactly what upstream anet itself does on every non-Android platform.",
+                                                   "api_surface":  "Interfaces, InterfaceAddrs, InterfaceAddrsByInterface, SetAndroidVersion (plus the netlink RIB helpers). The only callers in these binaries are github.com/pion/transport/{v2,v3,v4}/stdnet, which use Interfaces and InterfaceAddrsByInterface."
+                                               }
+                                           ]
+                     },
+                     {
+                         "artifact":  "libobfs4proxy.so",
+                         "transport":  "obfs4",
+                         "go_module":  "gitlab.com/yawning/obfs4.git",
+                         "main_package":  "gitlab.com/yawning/obfs4.git/obfs4proxy",
+                         "resolved_version":  "v0.0.0-20231012084234-c3e2d44b1033",
+                         "requested_version":  "v0.0.0-20231012084234-c3e2d44b1033",
+                         "build_command":  "go get gitlab.com/yawning/obfs4.git/obfs4proxy@v0.0.0-20231012084234-c3e2d44b1033; go build -o libobfs4proxy.so \u003cpkg\u003e",
+                         "file_size_bytes":  10597328,
+                         "sha256":  "408ea6a296d02755f4a1d5c849a02e20e716ad6a71c8dbc6a3bec687c23ba090",
+                         "elf_is_elf":  true,
+                         "elf_e_machine":  "0xB7",
+                         "elf_e_machine_ok":  true,
+                         "elf_e_type":  3,
+                         "elf_e_type_ok":  true,
+                         "go_version_line":  "mod\tgitlab.com/yawning/obfs4.git\tv0.0.0-20231012084234-c3e2d44b1033\th1:UmuE3KA7vwWLvf+BJWPiecxixrsh913zf2EwnY6aGK8=",
+                         "go_dependency_count":  6,
+                         "go_replacements":  [
+
+                                             ],
+                         "uses_anet_shim":  false,
+                         "verification":  "PASS",
+                         "notes":  "The last standalone upstream obfs4proxy release (2023-10-12); upstream obfs4proxy is superseded by lyrebird. No source modifications.",
+                         "substitutions":  [
+
+                                           ]
+                     },
+                     {
+                         "artifact":  "libsnowflake-client.so",
+                         "transport":  "snowflake",
+                         "go_module":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2",
+                         "main_package":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/client",
+                         "resolved_version":  "v2.15.1",
+                         "requested_version":  "v2.15.1",
+                         "build_command":  "go get \u003cpkg\u003e@v2.15.1; go mod edit -replace github.com/wlynxg/anet=\u003ctool/anet-shim\u003e; go build -o libsnowflake-client.so \u003cpkg\u003e",
+                         "file_size_bytes":  24927455,
+                         "sha256":  "8cec55f523abfbedc127afa2a335ec7897b772882a996e6f73c62fa4b8def427",
+                         "elf_is_elf":  true,
+                         "elf_e_machine":  "0xB7",
+                         "elf_e_machine_ok":  true,
+                         "elf_e_type":  3,
+                         "elf_e_type_ok":  true,
+                         "go_version_line":  "mod\tgitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2\tv2.15.1\th1:QUVDPSkMrvdKlBnDuAFvN2WgqwueU6MoV11c51CpcFg=",
+                         "go_dependency_count":  56,
+                         "go_replacements":  [
+                                                 "=\u003e\tD:\\Users\\EvGeN\\Desktop\\darkflow\\tool\\anet-shim\t(devel)"
+                                             ],
+                         "uses_anet_shim":  true,
+                         "verification":  "PASS",
+                         "notes":  "The module path requested (snowflake/v2/client) resolves to the parent module snowflake/v2; the client package sits in its client/ subdirectory, which is what the path line reports. Its go.mod declares \"go 1.25.12\".",
+                         "substitutions":  [
+                                               {
+                                                   "consequence":  "anet\u0027s Android netlink workaround is NOT present. Interface enumeration uses the standard library getifaddrs path instead. This is the one functional deviation in this build set.",
+                                                   "version":  "v0.0.5 (redirected)",
+                                                   "kind":  "local source substitute",
+                                                   "path":  "tool/anet-shim",
+                                                   "module":  "github.com/wlynxg/anet",
+                                                   "reason":  "Upstream anet v0.0.5 links against the unexported standard-library symbol net.zoneCache via //go:linkname, which the Go linker rejects: \"link: github.com/wlynxg/anet: invalid reference to net.zoneCache\". Reproduced for GOOS=android/GOARCH=arm64 with go1.23.4, go1.25.12 and go1.27.2. snowflake needs go \u003e= 1.25.12 and lyrebird needs go \u003e= 1.26.0, so no toolchain that can build these clients avoids it, and there is no build tag that selects anet\u0027s non-Android pass-through file when the target is Android. The shim keeps the same import path and exported API but implements it on top of the standard library net package, which is exactly what upstream anet itself does on every non-Android platform.",
+                                                   "api_surface":  "Interfaces, InterfaceAddrs, InterfaceAddrsByInterface, SetAndroidVersion (plus the netlink RIB helpers). The only callers in these binaries are github.com/pion/transport/{v2,v3,v4}/stdnet, which use Interfaces and InterfaceAddrsByInterface."
+                                               }
+                                           ]
+                     },
+                     {
+                         "artifact":  "libwebtunnel-client.so",
+                         "transport":  "webtunnel",
+                         "go_module":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/webtunnel",
+                         "main_package":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/webtunnel/main/client",
+                         "resolved_version":  "v0.0.7",
+                         "requested_version":  "v0.0.7",
+                         "build_command":  "go get \u003cpkg\u003e@v0.0.7; go build -o libwebtunnel-client.so \u003cpkg\u003e",
+                         "file_size_bytes":  7794969,
+                         "sha256":  "9cfc2bb1487e9a19fcb441ef89239ce76043b8068aa026dbd91a9ea1815b4e86",
+                         "elf_is_elf":  true,
+                         "elf_e_machine":  "0xB7",
+                         "elf_e_machine_ok":  true,
+                         "elf_e_type":  3,
+                         "elf_e_type_ok":  true,
+                         "go_version_line":  "mod\tgitlab.torproject.org/tpo/anti-censorship/pluggable-transports/webtunnel\tv0.0.7\th1:c7PutWnnXJytefsiENNo+iq2qAbE2RfUbggGtnnmuAA=",
+                         "go_dependency_count":  1,
+                         "go_replacements":  [
+
+                                             ],
+                         "uses_anet_shim":  false,
+                         "verification":  "PASS",
+                         "notes":  "The requested module path (webtunnel/main/client) resolves to the parent module webtunnel; the main package is main/client. No source modifications.",
+                         "substitutions":  [
+
+                                           ]
+                     },
+                     {
+                         "artifact":  "libmeek-client.so",
+                         "transport":  "meek_lite (meek)",
+                         "go_module":  "git.torproject.org/pluggable-transports/meek.git",
+                         "main_package":  "git.torproject.org/pluggable-transports/meek.git/meek-client",
+                         "resolved_version":  "v0.38.0",
+                         "requested_version":  "v0.38.0",
+                         "build_command":  "go get git.torproject.org/pluggable-transports/meek.git/meek-client@v0.38.0; go build -o libmeek-client.so \u003cpkg\u003e",
+                         "file_size_bytes":  11978767,
+                         "sha256":  "12b3ea43eb1927b559c10dac7e558ae63bb05542330f9ef3f54f3e648316f389",
+                         "elf_is_elf":  true,
+                         "elf_e_machine":  "0xB7",
+                         "elf_e_machine_ok":  true,
+                         "elf_e_type":  3,
+                         "elf_e_type_ok":  true,
+                         "go_version_line":  "mod\tgit.torproject.org/pluggable-transports/meek.git\tv0.38.0\th1:V5B0lkqwt9u8XNY4S0OtqrivSt6ss4qjQLE1hA9M2iU=",
+                         "go_dependency_count":  7,
+                         "go_replacements":  [
+
+                                             ],
+                         "uses_anet_shim":  false,
+                         "verification":  "PASS",
+                         "notes":  "The requested module path (meek-client) resolves to the parent module meek.git. No source modifications.",
+                         "substitutions":  [
+
+                                           ]
+                     },
+                     {
+                         "artifact":  "libconjure-client.so",
+                         "transport":  "conjure",
+                         "go_module":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/conjure",
+                         "main_package":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/conjure/client",
+                         "resolved_version":  "v0.0.0-20260113185639-0090962226b8",
+                         "requested_version":  "@latest",
+                         "build_command":  "go get \u003cpkg\u003e@latest; go mod edit -replace github.com/wlynxg/anet=\u003ctool/anet-shim\u003e; go mod edit -replace github.com/pion/dtls/v2=github.com/mingyech/dtls/v2@v2.0.0; go mod edit -replace github.com/refraction-networking/conjure@v0.7.11=github.com/refraction-networking/conjure@v0.7.12-0.20250507182851-8676ab6282b8; go build -o libconjure-client.so \u003cpkg\u003e",
+                         "file_size_bytes":  22751877,
+                         "sha256":  "1fef8e604852ffb25ff143bf3f6c5cf787e0fae5b347d5e8cf598ee2bd2f74a3",
+                         "elf_is_elf":  true,
+                         "elf_e_machine":  "0xB7",
+                         "elf_e_machine_ok":  true,
+                         "elf_e_type":  3,
+                         "elf_e_type_ok":  true,
+                         "go_version_line":  "mod\tgitlab.torproject.org/tpo/anti-censorship/pluggable-transports/conjure\tv0.0.0-20260113185639-0090962226b8\th1:piF+/lpYwt4wRrGdFoC4RTRqT+tZbNuwkd5xnTf3Ihg=",
+                         "go_dependency_count":  33,
+                         "go_replacements":  [
+                                                 "=\u003e\tgithub.com/mingyech/dtls/v2\tv2.0.0\th1:RKN1CjBs8wct3JnrcRmqnfH3BO0ocYLEhmg62uaHq+A=",
+                                                 "=\u003e\tD:\\Users\\EvGeN\\Desktop\\darkflow\\tool\\anet-shim\t(devel)"
+                                             ],
+                         "uses_anet_shim":  true,
+                         "verification":  "PASS",
+                         "notes":  "DEVIATION FROM THE REQUESTED MODULE PATH. The request named github.com/refraction-networking/conjure and suggested ./cmd/conjure-client. That repository has no client command: its cmd/ directory contains only the station-side cmd/application and cmd/registration-server, and the path cmd/conjure-client has never existed in its history. Its only package main files are four test/example programs (pkg/dtls/examples/{dial,listen}, pkg/registrars/dns-registrar/examples/{client,server}), none of which is the client PT. The actual Tor Conjure client pluggable transport is a separate module, gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/conjure, whose client/conjure.go is package main, calls pt.ClientSetup, serves the \"conjure\" managed transport and honours TOR_PT_EXIT_ON_STDIN_CLOSE - i.e. it is the client binary Tor invokes. That module was built instead. It also depends on github.com/refraction-networking/conjure v0.9.1 as a library.",
+                         "substitutions":  [
+                                               {
+                                                   "consequence":  "anet\u0027s Android netlink workaround is NOT present. Interface enumeration uses the standard library getifaddrs path instead. This is the one functional deviation in this build set.",
+                                                   "version":  "v0.0.5 (redirected)",
+                                                   "kind":  "local source substitute",
+                                                   "path":  "tool/anet-shim",
+                                                   "module":  "github.com/wlynxg/anet",
+                                                   "reason":  "Upstream anet v0.0.5 links against the unexported standard-library symbol net.zoneCache via //go:linkname, which the Go linker rejects: \"link: github.com/wlynxg/anet: invalid reference to net.zoneCache\". Reproduced for GOOS=android/GOARCH=arm64 with go1.23.4, go1.25.12 and go1.27.2. snowflake needs go \u003e= 1.25.12 and lyrebird needs go \u003e= 1.26.0, so no toolchain that can build these clients avoids it, and there is no build tag that selects anet\u0027s non-Android pass-through file when the target is Android. The shim keeps the same import path and exported API but implements it on top of the standard library net package, which is exactly what upstream anet itself does on every non-Android platform.",
+                                                   "api_surface":  "Interfaces, InterfaceAddrs, InterfaceAddrsByInterface, SetAndroidVersion (plus the netlink RIB helpers). The only callers in these binaries are github.com/pion/transport/{v2,v3,v4}/stdnet, which use Interfaces and InterfaceAddrsByInterface."
+                                               },
+                                               {
+                                                   "module":  "github.com/pion/dtls/v2",
+                                                   "reason":  "The Tor Conjure module go.mod declares this replace and it is load-bearing: without it conjure/pkg/dtls does not compile against stock pion/dtls (unknown field CustomClientHelloRandom, undefined RemoteRandomBytes/RandomBytes). A replace directive in a dependency\u0027s go.mod does not take effect when that module is a dependency, so it is replayed into the build module - which is what the module\u0027s authors intended.",
+                                                   "version":  "v2.2.12 =\u003e github.com/mingyech/dtls/v2 v2.0.0",
+                                                   "kind":  "replace replayed from the upstream module go.mod"
+                                               },
+                                               {
+                                                   "module":  "github.com/refraction-networking/conjure",
+                                                   "reason":  "Also declared by the Tor Conjure module go.mod. Without it the library resolves to the station revision rather than the client revision the module asks for. The proxy does not offer v0.7.11, so this replacement is required for resolution to succeed at all.",
+                                                   "version":  "v0.7.11 =\u003e v0.7.12-0.20250507182851-8676ab6282b8",
+                                                   "kind":  "replace replayed from the upstream module go.mod"
+                                               }
+                                           ]
+                     }
+                 ]
+}

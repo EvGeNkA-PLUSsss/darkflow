@@ -1,0 +1,34 @@
+# Test configuration.
+#
+# The `integration` tag marks tests that start a real Tor daemon and wait for it to bootstrap.
+# They verify the one thing unit tests structurally cannot - that the ports written into torrc
+# are the ports something is actually listening on. That check earned its place immediately: the
+# first version of the port fix made the daemon refuse to start with "Failed to bind one of the
+# listener ports", and nothing else in the suite could see it.
+#
+# They are kept out of a plain `flutter test` for a reason that is not about time. Each one spawns
+# a Tor process and waits on the network, and running them beside six hundred unit tests starves
+# the rest of the suite: test/features/image_preview_test.dart failed with "The file vault is
+# locked" and thirty-second timeouts in one run, and passed in the next, purely because of what it
+# was competing with. A flaky suite is worse than a slow one.
+#
+# Two ways to run, then:
+#
+#     flutter test --exclude-tags integration    # the everyday check, about fifteen seconds
+#     flutter test --tags integration            # the Tor checks, about two minutes each
+#
+# ## Why concurrency is capped
+#
+# Flutter's runner defaults to half the machine's cores in parallel, which on a many-core desktop
+# is a dozen test files at once. That is fine until one of them starts a Tor daemon and copies a
+# hundred and fifty megabytes of runtime: the rest of the suite then loses its time budget, and
+# `test/features/image_preview_test.dart` failed with "The file vault is locked" and thirty-second
+# timeouts in one run while passing in the next.
+#
+# A flaky suite is worse than a slow one — it fails a release for no reason, and the habit it
+# teaches is to re-run until it goes green. Four files at a time costs a couple of seconds and
+# removes the contention.
+concurrency: 4
+
+tags:
+  integration:

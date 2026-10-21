@@ -1,0 +1,39 @@
+# Line endings.
+#
+# The repository was developed on Windows, so the working copy has CRLF in places
+# and LF in others. Normalising on the way in means a clone on any platform gets
+# the same bytes, and a diff shows what changed rather than which editor saved it.
+* text=auto eol=lf
+
+# Files that must keep their bytes exactly. A binary treated as text is silently
+# corrupted by a line-ending conversion, and for a bundled Tor binary that means a
+# daemon that no longer runs.
+*.exe   binary
+*.dll   binary
+*.so    binary
+*.dylib binary
+*.jks   binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
+*.ttf   binary
+*.otf   binary
+*.zip   binary
+*.apk   binary
+*.aab   binary
+*.keystore binary
+
+# Generated or vendored files that produce nothing useful in a diff.
+pubspec.lock        linguist-generated
+*.g.dart            linguist-generated
+*.freezed.dart      linguist-generated
+
+# Docs and configuration that a reader will look at on the web interface.
+*.md    text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.dart  text eol=lf
+*.ps1   text eol=lf
+*.py    text eol=lf
+*.kts   text eol=lf
+*.svg   text eol=lf

@@ -1,0 +1,67 @@
+{
+    "platform":  "windows-x64",
+    "tor_version":  "Tor version 0.4.9.13 (git-3c575400909efe65).",
+    "source_url":  "https://github.com/nefarius/TorSharp.Mirror/releases/download/mirror-2026.10.10/tor-expert-bundle-windows-x86_64-15.0.24.tar.gz",
+    "fetched_at":  "2026-10-10T22:12:48.9493261+03:00",
+    "files":  [
+                  {
+                      "name":  "tor.exe",
+                      "sha256":  "90bbdcafd586feea608a5e9b7d3959f4ee194f7770755cfde8fab240e9773ad1",
+                      "bytes":  10227200
+                  },
+                  {
+                      "name":  "geoip",
+                      "sha256":  "e55526d2991de956cbc403e7bfab372f633b8472fb3926592826e2db5cf3418e",
+                      "bytes":  9725448
+                  },
+                  {
+                      "name":  "geoip6",
+                      "sha256":  "2e3af25ccfcd2b317539f5cd61260302dbd11331ce31b6e1bfe91ebe102e38a9",
+                      "bytes":  16271359
+                  },
+                  {
+                      "name":  "obfs4proxy.exe",
+                      "sha256":  "0bd0cd96b9b83496822e67dc4be4fcffd69238b419c5cd47af78949549ca8c13",
+                      "bytes":  10834432
+                  },
+                  {
+                      "name":  "snowflake-client.exe",
+                      "sha256":  "8afa5ccadd9afcc5f32f0b61594e21c172c722f8ce378954f295abd1b506bcb2",
+                      "bytes":  26270208
+                  },
+                  {
+                      "name":  "webtunnel-client.exe",
+                      "sha256":  "eed4d65a9e2e7a534f22b091fb669fbf595fa0846c2ce272f179f4c5f1fb170f",
+                      "bytes":  8053248
+                  },
+                  {
+                      "name":  "lyrebird.exe",
+                      "sha256":  "6e218e85f9a7ae2481f5402ded822471a9a9d0c7e66b05db3842b93fa5c1f02e",
+                      "bytes":  17957376
+                  },
+                  {
+                      "name":  "conjure-client.exe",
+                      "sha256":  "6d3bca367226caf0cd065ced8b031b482b5cd5c3889bce886f2e903197b9b43b",
+                      "bytes":  13140480
+                  },
+                  {
+                      "name":  "meek-client.exe",
+                      "sha256":  "c4fbddcccac063491473f5575ca6b008ef926db4de25ce941a74da5e237859a0",
+                      "bytes":  12278272
+                  }
+              ],
+    "built_from_source":  {
+                              "obfs4proxy.exe":  "gitlab.com/yawning/obfs4.git/obfs4proxy@v0.0.0-20231012084234-c3e2d44b1033",
+                              "snowflake-client.exe":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/client@v2.15.1",
+                              "webtunnel-client.exe":  "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/webtunnel/main/client@v0.0.7",
+                              "meek-client.exe":  "git.torproject.org/pluggable-transports/meek.git/meek-client@v0.38.0"
+                          },
+    "notes":  [
+                  "Official Tor Expert Bundle (tor-browser 15.0.24) is the source of tor.exe, geoip, geoip6, lyrebird.exe and conjure-client.exe.",
+                  "The Expert Bundle does not ship standalone snowflake-client.exe, webtunnel-client.exe, meek-client.exe or obfs4proxy.exe; those were compiled from official upstream Tor Project / pluggable-transports Go sources (see built_from_source) with CGO_ENABLED=0, GOOS=windows GOARCH=amd64, modules fetched through proxy.golang.org.",
+                  "lyrebird.exe is the modern unified PT and itself serves obfs4, snowflake, webtunnel, meek_lite, obfs3, obfs2 and scramblesuit; upstream no longer ships a separate obfs4proxy.exe, so obfs4proxy.exe here is the last standalone upstream obfs4 release (2023-10-12).",
+                  "Every binary was executed during this run; tor.exe --version printed the value in tor_version and each PT completed the Tor PT handshake (VERSION 1 / CMETHOD ... / CMETHODS DONE).",
+                  "No companion DLLs are required; the archive contains no .dll files and every binary ran standalone.",
+                  "tor.exe locates geoip/geoip6 in its DataDirectory (or via GeoIPFile/GeoIPv6File); place a copy there or point those options at assets\\tor\\windows\\geoip and geoip6."
+              ]
+}

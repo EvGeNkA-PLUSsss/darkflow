@@ -1,0 +1,116 @@
+name: darkflow
+description: "DarkFlow — a serverless peer-to-peer messenger that lives on the Tor network."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Cryptography.
+  #
+  # Pure Dart, deliberately. The obvious alternative — `sodium`, which binds
+  # libsodium — is faster, but its Dart build hook crashes on a non-UTF-8
+  # console: it decodes MSBuild's output as UTF-8, and on a Russian Windows the
+  # compiler answers in CP1251, so `flutter build windows` dies before CMake
+  # even runs. That is a bug in the package, not in this project, and it cannot
+  # be worked around from here.
+  #
+  # `cryptography` provides everything DarkFlow needs and behaves identically on
+  # every target: AES-256-GCM (the AEAD the architecture note mandates), Argon2id
+  # for the password, Ed25519 for identity, X25519 for key agreement, HKDF and
+  # BLAKE2b. `tool/bench_crypto.dart` measures the cost of each on real hardware.
+  cryptography: ^2.9.0
+
+  # Storage. DarkFlow deliberately does not use SQLite: every record is sealed
+  # with the master key and persisted by lib/src/data/vault_store.dart, which
+  # keeps the encrypted-at-rest guarantee obvious and removes a native
+  # dependency from the build.
+  path: ^1.9.0
+  path_provider: ^2.1.6
+
+  # The PIN-binding secret is sealed by the platform's own mechanism:
+  # Windows DPAPI is called through dart:ffi, and elsewhere the secret is a file
+  # only its owner can read. `flutter_secure_storage` would have been the
+  # obvious choice, but its Windows plugin includes `atlstr.h`, so
+  # `flutter build windows` fails with error C1083 unless the C++ ATL component
+  # is installed — and DPAPI is the API that plugin would have used anyway.
+  # See lib/src/security/device_secret_store.dart.
+  ffi: ^2.2.0
+
+  # Media.
+  record: ^7.1.2
+  audioplayers: ^6.8.1
+  file_picker: ^13.1.0
+
+  # Interface.
+  #
+  # `pretty_qr_code` rather than `qr_flutter`: the latter has not been touched
+  # since 2023. Scanning uses `mobile_scanner`, which covers Android, iOS and
+  # macOS; on desktop the address is pasted or read from a file, since no single
+  # package provides live-camera scanning on all five platforms.
+  pretty_qr_code: ^3.6.0
+  mobile_scanner: ^7.4.2
+
+  # flutter_localizations in Flutter 3.44.4 pins intl to exactly 0.20.2, so a
+  # caret constraint here would fight the SDK.
+  intl: 0.20.2
+
+  mime: ^2.1.0
+  flutter_local_notifications: 18.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/
+    - assets/bridges/
+    # `assets/tor/` is NOT declared here, and its absence is deliberate.
+    #
+    # The Tor daemon and its pluggable transports ship with the app: an app that
+    # asks a censored user to install a second package from an app store is one
+    # takedown away from being unusable, so the binaries travel with the build and
+    # are unpacked into the application support directory on first run. See
+    # lib/src/tor/tor_paths.dart.
+    #
+    # They cannot live in a declared asset directory, because Flutter copies every
+    # declared directory into every build on every platform — there is no
+    # conditional syntax in pubspec and no Gradle exclusion for Flutter assets,
+    # which are merged as Android *assets* rather than resources. Keeping the
+    # 119 MB Windows runtime at `assets/tor/windows/` meant it was copied into the
+    # Android APK, where none of it can execute: Android refuses to run code from
+    # app-private storage and ships Tor as `jniLibs/arm64-v8a/lib*.so` instead.
+    #
+    # Declaring a second, near-empty `assets/tor/android/` does not help. That was
+    # tried and measured: Flutter bundles both directories regardless of the
+    # target platform.
+    #
+    # So the runtime lives in `tor_runtime/windows/` and is *staged* into
+    # `assets/tor/` by tool/stage_tor_runtime.ps1 immediately before a desktop
+    # build, then removed by tool/unstage_tor_runtime.ps1. tool/release.ps1 and the
+    # documented Windows build path do both automatically, and tool/build_android.ps1
+    # unstages and then verifies the finished APK contains no Windows binary.
+    #
+    # The consequence for a bare `flutter build windows` with nothing staged is a
+    # build that succeeds and an app that reports the Tor runtime as missing when
+    # Connect is pressed - a clear failure, and the staging script is the fix.
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
