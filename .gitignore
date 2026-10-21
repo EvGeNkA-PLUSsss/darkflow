@@ -84,3 +84,7 @@ tool/tor_runtime_windows/
 # release; committing them would put a 62 MB ZIP and a 45 MB APK in every clone
 # for ever, and git would keep every past version of them too.
 /dist/
+
+# Scratch files used while writing a commit message.
+commit-message.txt
+m.txt
