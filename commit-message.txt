@@ -1,0 +1,9 @@
+Add the channel description and the first post
+
+Written to be used as-is: the name, the bio inside Telegram's 255-character limit, an
+announcement with the banner attached, and a pinned comment with unwrapped links and the
+checksums.
+
+The limitations are in the announcement itself rather than a footnote. A privacy tool that
+hides its gaps teaches people to trust it more than they should, and the first post is the
+only place most readers will ever look.
